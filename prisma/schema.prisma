@@ -1,7 +1,6 @@
 // prisma/schema.prisma
 generator client {
   provider = "prisma-client-js"
-  output   = "../src/generated/prisma"
 }
 
 datasource db {
@@ -10,7 +9,7 @@ datasource db {
 }
 
 model User {
-  id            Int            @id @default(autoincrement())
+  id            String         @id @default(uuid())
   username      String?
   email         String         @unique
   password      String
@@ -22,12 +21,29 @@ enum ContentType {
   BOOK
   MOVIE
   PODCAST
-  MUSIC
-  PAGE
+  SONG
+  BAND
+  VIDEO
+  INSTAGRAM
+  YOUTUBE
+  TIKTOK
+  WEBSITE
+  ARTICLE
+  BLOG
+  DOCUMENTARY
+  SERIES
+  COURSE
+  APP
+  EVENT
+  NEWS
+  IMAGE
+  TOOL
+  RESOURCE
+  PROJECT
 }
 
 model Content {
-  id            Int            @id @default(autoincrement())
+  id            String         @id @default(uuid())
   title         String
   type          ContentType
   description   String?
@@ -35,17 +51,16 @@ model Content {
   contributions Contribution[]
   createdAt     DateTime       @default(now())
   updatedAt     DateTime       @updatedAt
+
+  @@unique([title, type])
 }
 
 model Contribution {
-  id          Int          @id @default(autoincrement())
-  contentId   Int?
-  content     Content?     @relation(fields: [contentId], references: [id])
-  userId      Int
-  user        User         @relation(fields: [userId], references: [id])
-  title       String?
-  type        ContentType?
-  description String?
-  link        String?
-  createdAt   DateTime     @default(now())
+  id        String   @id @default(uuid())
+  contentId String
+  content   Content  @relation(fields: [contentId], references: [id])
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  comment   String?
+  createdAt DateTime @default(now())
 }
