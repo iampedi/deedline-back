@@ -6,10 +6,15 @@ import prisma from "@/db/prismaClient";
 // CREATE new content
 export const createContent = async (req: Request, res: Response) => {
   try {
-    const { title, type, description, link } = req.body;
+    const { title, type, link, tags, description } = req.body;
 
     const existing = await prisma.content.findUnique({
-      where: { title },
+      where: {
+        title_type: {
+          title,
+          type,
+        },
+      },
     });
 
     if (existing) {
@@ -20,8 +25,9 @@ export const createContent = async (req: Request, res: Response) => {
       data: {
         title,
         type,
-        description,
         link,
+        tags,
+        description,
       },
     });
     res.status(201).json(content);
@@ -61,10 +67,12 @@ export const getContent = async (req: Request, res: Response) => {
 export const updateContent = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
-    const { title, type, description, link } = req.body;
+    const { title, type, link, tags, description } = req.body;
 
     if (title) {
-      const existing = await prisma.content.findUnique({ where: { title } });
+      const existing = await prisma.content.findUnique({
+        where: { title_type: { title, type } },
+      });
       if (existing && existing.id !== id) {
         return res.status(400).json({ error: "Content already exists." });
       }

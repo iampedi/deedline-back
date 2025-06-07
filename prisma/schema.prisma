@@ -46,8 +46,9 @@ model Content {
   id            String         @id @default(uuid())
   title         String
   type          ContentType
-  description   String?
   link          String
+  tags          String[]
+  description   String?
   contributions Contribution[]
   createdAt     DateTime       @default(now())
   updatedAt     DateTime       @updatedAt
