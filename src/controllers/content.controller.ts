@@ -1,7 +1,7 @@
-import { log } from "console";
 // src/controllers/content.controllers.ts
 import { Request, Response } from "express";
 import prisma from "@/db/prismaClient";
+import { ContentType } from "@prisma/client";
 
 // CREATE new content
 export const createContent = async (req: Request, res: Response) => {
@@ -32,7 +32,6 @@ export const createContent = async (req: Request, res: Response) => {
     });
     res.status(201).json(content);
   } catch (error: any) {
-    console.log(req.body);
     console.log("🔴 Create Content Error‼️ ", error);
     res.status(500).json({ error: "Failed to create content." });
   }
@@ -41,7 +40,15 @@ export const createContent = async (req: Request, res: Response) => {
 // GET all contents
 export const getAllContents = async (req: Request, res: Response) => {
   try {
-    const contents = await prisma.content.findMany();
+    const { type } = req.query;
+
+    let where = undefined;
+
+    if (type && Object.values(ContentType).includes(type as ContentType)) {
+      where = { type: type as ContentType };
+    }
+
+    const contents = await prisma.content.findMany({ where });
     res.json(contents);
   } catch (error) {
     console.log("🔴 Get Contents Error‼️ ", error);
